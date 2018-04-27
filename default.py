@@ -49,7 +49,7 @@ def INDEXPAGES(url):
             br = br + 1
             print 'Items counter: ' + str(br)
         if br == 15: #тогава имаме следваща страница и конструираме нейния адрес
-            matchp = re.compile('<span class="current">1</span><a href="(.+?)/page/(.+?)/').findall(data)
+            matchp = re.compile('<span class="current">\d+</span><a href="(.+?)/page/(.+?)/').findall(data)
             for baseurl,numb in matchp:
              number = 0
              page = int(number)
@@ -86,7 +86,7 @@ def SEARCH(url):
              br = br + 1
              print 'Items counter: ' + str(br)
             if br >= 15: #тогава имаме следваща страница и конструираме нейния адрес
-             matchp = re.compile('<span class="current">1</span><a href="(.+?)/page/(.+?)/').findall(data)
+             matchp = re.compile('<span class="current">\d+</span><a href="(.+?)/page/(.+?)/').findall(data)
              for baseurl,numb in matchp:
               number = 0
               page = int(number)
