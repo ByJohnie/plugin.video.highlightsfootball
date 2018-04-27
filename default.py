@@ -57,7 +57,7 @@ def INDEXPAGES(url):
              url = baseurl + '/page/' + str(currentDisplayCounter) + '/'
              print 'sledvasta stranica' + url
              thumbnail='DefaultFolder.png'
-             addDir('Следваща страница>>'+str(currentDisplayCounter),url,1,thumbnail)
+             addDir('Next Page '+str(currentDisplayCounter)'>>',url,1,thumbnail)
 
 
 #Търсачка
@@ -94,9 +94,9 @@ def SEARCH(url):
               url = baseurl + '/page/' + str(currentDisplayCounter) + '/'
               print 'sledvasta stranica' + url
               thumbnail='DefaultFolder.png'
-              addDir('Следваща страница>>'+str(currentDisplayCounter),url,1,thumbnail)
+              addDir('Next Page '+str(currentDisplayCounter)'>>',url,1,thumbnail)
         else:
-             addDir('Върнете се назад в главното меню за да продължите','','',"DefaultFolderBack.png")
+             addDir('Go Back There no results','','',"DefaultFolderBack.png")
 
 def SHOW(url):
        req = urllib2.Request(url)
