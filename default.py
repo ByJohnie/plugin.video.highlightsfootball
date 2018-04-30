@@ -57,7 +57,7 @@ def INDEXPAGES(url):
              url = baseurl + '/page/' + str(currentDisplayCounter) + '/'
              print 'sledvasta stranica' + url
              thumbnail='DefaultFolder.png'
-             addDir('Next Page '+str(currentDisplayCounter)'>>',url,1,thumbnail)
+             addDir('Next Page '+str(currentDisplayCounter)+'>>',url,1,thumbnail)
 
 
 #Търсачка
@@ -94,7 +94,7 @@ def SEARCH(url):
               url = baseurl + '/page/' + str(currentDisplayCounter) + '/'
               print 'sledvasta stranica' + url
               thumbnail='DefaultFolder.png'
-              addDir('Next Page '+str(currentDisplayCounter)'>>',url,1,thumbnail)
+              addDir('Next Page '+str(currentDisplayCounter)+'>>',url,1,thumbnail)
         else:
              addDir('Go Back There no results','','',"DefaultFolderBack.png")
 
@@ -104,9 +104,10 @@ def SHOW(url):
        response = urllib2.urlopen(req)
        data=response.read()
        response.close()
-       match = re.compile("<iframe.+?src=.(.+?). ").findall(data)
+       match = re.compile("<iframe.+?src=.(.+?\d+).").findall(data)
        for link in match:
-        print link       
+        link = link.replace('//','https://')
+        link = link.replace('https:https://','https:')
         match2 = re.compile('<h2>(.+?)</h2>\s+<p>(.+?)<br />\s+(.*)<br />\s+.*<br />\s+(.*)<br />\s+(.*)<br />').findall(data)
         for one,two,three,four,five in match2:
          one = one.replace('&#8211;','')
@@ -119,7 +120,13 @@ def SHOW(url):
           for link2 in match3:     
             addLink2(name,link2,6,desc,'DefaultVideo.png')       
          if not 'content-ventures' or not 'matchat' in link:
-          addLink2(name,link,4,desc,'DefaultVideo.png') 
+          addLink2(name,link,4,desc,'DefaultVideo.png')
+         if '<li tabindex="0" class="button_style" id="item2">' in data:
+          match3 = re.compile('<li tabindex="0" class="button_style" id="item\d+"><a href=.(.+?).>.+?>(.+?)<').findall(data)
+          for altlinks,newname in match3:       
+           addDir(newname,url,7,'DefaultFolder.png')      
+                  
+                  
 
 
 
@@ -154,7 +161,7 @@ def PLAYMC(url):
         response = urllib2.urlopen(req)
         data = response.read()
         response.close()
-        match = re.compile("hls: '(.+?)'").findall(data)
+        match = re.compile("hls:.(.+?).}").findall(data)
         for urlc in match:
           lnk = 'https:' + urlc
           li = xbmcgui.ListItem(iconImage=iconimage, thumbnailImage=iconimage, path=lnk)
@@ -192,6 +199,30 @@ def PLAYCV(url):
          try: _addon.resolve_url(stream_url)
          except: t=''
 
+def ALTERNATIVE(url):
+       req = urllib2.Request(url)
+       req.add_header('User-Agent', UA)
+       response = urllib2.urlopen(req)
+       data=response.read()
+       response.close()
+       match = re.compile("<iframe.+?src=.(.+?\d+).").findall(data)
+       for link in match:
+        link = link.replace('//','https://')
+        link = link.replace('https:https://','https:')
+        match2 = re.compile('<h2>(.+?)</h2>\s+<p>(.+?)<br />\s+(.*)<br />\s+.*<br />\s+(.*)<br />\s+(.*)<br />').findall(data)
+        for one,two,three,four,five in match2:
+         one = one.replace('&#8211;','')
+         desc = one + ' ' + two + ' ' + three + ' ' + four + ' ' + five
+         print desc
+         if 'matchat' in link:
+          addLink2(name,link,5,desc,'DefaultVideo.png')
+         if 'content-ventures' in link:
+          match3 = re.compile('id="item2"><a href="(.+?)"><div class="acp_title">').findall(data)
+          for link2 in match3:     
+            addLink2(name,link2,6,desc,'DefaultVideo.png')       
+         if not 'content-ventures' or not 'matchat' in link:
+          addLink2(name,link,4,desc,'DefaultVideo.png')
+      
 #Модул за добавяне на отделно заглавие и неговите атрибути към съдържанието на показваната в Kodi директория - НЯМА НУЖДА ДА ПРОМЕНЯТЕ НИЩО ТУК
 def addLink(name,url,mode,plot,iconimage):
         u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
@@ -307,5 +338,9 @@ elif mode==5:
 elif mode==6:
         print ""+url
         PLAYCV(url)
+
+elif mode==7:
+        print ""+url
+        ALTERNATIVE(url)        
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
